@@ -3,16 +3,16 @@ import React from 'react'
 import Hero from '@/components/Hero'
 import Footer from '@/components/Footer'
 import OurStory from '@/components/OurStory'
-// import Testimonials from '@/components/Testimonials'
+import Testimonials from '@/components/Testimonials'
 import Header from '@/components/Header'
 const Home = () => {
   return (
     <div>
-      {/* <Header /> */}
+      <Header />
       <Hero/>
       <FeaturedDishes />
       <OurStory />
-      {/* <Testimonials /> */}
+      <Testimonials />
       <Footer />
     </div>
   )

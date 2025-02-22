@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/database/dbConnect"; // Ensure dbConnect is correctly set up
-import Reservation from "@/database/models/reservation";// Import the Reservation model
-
+import Reservation from "@/database/models/reservation.modal";// Import the Reservation model
+const load = async()=>{
+  dbConnect();
+}
+await load();
 export async function POST(req: Request) {
   try {
     await dbConnect(); 
@@ -13,14 +16,14 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    const newReservation = await Reservation.create(data);
+    const newReservation = await Reservation.create(data)
 
     return NextResponse.json(
       { success: true, reservation: newReservation },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating reservation:", error);
+    console.log("Error creating reservation:", error);
     return NextResponse.json(
       { success: false, message: "Failed to create reservation. Try again later." },
       { status: 500 }
@@ -30,7 +33,7 @@ export async function POST(req: Request) {
 export async function GET(){
     try{
       await  dbConnect();
-        const reservationData = (await Reservation.find({}).sort({ createdAt: -1 }).limit(20))
+        const reservationData = await Reservation.find({})
         return NextResponse.json({
             success:true,
             message:`successfully fetched reservation data`,

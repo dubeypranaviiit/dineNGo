@@ -1,6 +1,7 @@
 "use client"
 import React, { useState,useEffect } from 'react'
 import axios from 'axios';
+import ReservationsTable from '@/components/ReservationTable';
 const Reservation = () => {
   const [reservations,setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,9 @@ const Reservation = () => {
     getBookingData();
   }, []);
   return (
-    <div>page</div>
+    <div>
+      <ReservationsTable />
+    </div>
   )
 }
 

@@ -9,15 +9,15 @@ const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-md fixed w-full top-0 left-0 z-50">
+    <header className="bg-white shadow-md fixed w-full top-0 left-0 z-50 lg:h-[8%]">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         {/* Logo */}
         <Link href="/">
           <Image
             src="/image.png" // Update this with your logo path
             alt="DineNGo Logo"
-            width={150}
-            height={50}
+            width={120}
+            height={30}
             className="cursor-pointer w-[50px]  rounded-full"
           />
         </Link>
@@ -29,14 +29,14 @@ const Header: React.FC = () => {
           <Link href="/about" className="text-gray-700 hover:text-amber-500">About</Link>
           <Link href="/contact" className="text-gray-700 hover:text-amber-500">Contact</Link>
           <Link href="/reservation">
-            <button className="bg-amber-500 text-white px-6 py-2 rounded-full hover:bg-amber-600 transition">
+            <button className="bg-amber-500 text-white px-6 py-2 mt-0 rounded-full hover:bg-amber-600 transition">
               Book a Table
             </button>
           </Link>
         </nav>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden text-gray-700" onClick={() => setIsOpen(!isOpen)}>
+        <button className="md:hidden text-gray-700  " onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
         </button>
       </div>

@@ -14,21 +14,21 @@ const testimonials: Testimonial[] = [
   {
     id: 1,
     name: "John Doe",
-    avatar: "no img",
+    avatar: "/blog_pic_1.png",
     rating: 5,
     comment: "Amazing food and great ambiance! Highly recommend."
   },
   {
     id: 2,
     name: "Jane Smith",
-    avatar: "/images/jane.jpg",
+    avatar: "/blog_pic_2.png",
     rating: 4,
     comment: "Loved the experience! The service was excellent."
   },
   {
     id: 3,
     name: "Michael Brown",
-    avatar: "/images/michael.jpg",
+    avatar: "/blog_pic_3.png",
     rating: 5,
     comment: "A must-visit place for food lovers!"
   }
@@ -57,6 +57,8 @@ const Testimonials: React.FC = () => {
             <Image
               src={currentTestimonial.avatar}
               alt={currentTestimonial.name}
+              width={500} // Set appropriate width
+              height={400} 
               className="w-16 h-16 rounded-full object-cover mr-4"
             />
             <div>

@@ -1,6 +1,18 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { FaCalendar, FaClock, FaUser, FaPhone, FaEnvelope, FaUtensils } from "react-icons/fa";
+import axios from "axios";
+import ReservationsTable from "./ReservationTable";
+interface Reservation {
+  name: string;
+  email: string;
+  phone: number;
+  date: string;
+  time: string;
+  guests: number;
+  specialRequests?: string;
+}
+
 
 const ReservationSystem = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +24,8 @@ const ReservationSystem = () => {
     guests: 1,
     specialRequests: "",
   });
+  // const [reservations,setReservations]= useState([])
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -42,19 +56,61 @@ const ReservationSystem = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const validationErrors = validateForm();
+  //   setErrors(validationErrors);
+
+  //   if (Object.keys(validationErrors).length === 0) {
+  //     setIsSubmitting(true);
+  //     setTimeout(() => {
+  //       setIsSubmitting(false);
+  //       setShowConfirmation(true);
+  //     }, 1500);
+  //   }
+  // };
+  const handleSubmit = async (e) => {
     e.preventDefault();
+  
     const validationErrors = validateForm();
     setErrors(validationErrors);
-
+  
     if (Object.keys(validationErrors).length === 0) {
       setIsSubmitting(true);
-      setTimeout(() => {
+  
+      try {
+        const response = await axios.post("/api/reservation", formData);
+  
+        if (response.data.success) {
+          if (Array.isArray(response.data.reservation)) {
+            setReservations(response.data.reservation);
+          } else {
+            setReservations([response.data.reservation]); // Ensure it's an array
+          }
+          setShowConfirmation(true);
+          setIsSubmitting(false);
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            date: "",
+            time: "",
+            guests: 1,
+            specialRequests: "",
+          });
+        } else {
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert("Failed to submit reservation. Please try again.");
+      } finally {
         setIsSubmitting(false);
-        setShowConfirmation(true);
-      }, 1500);
+      }
     }
   };
+  
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -62,7 +118,9 @@ const ReservationSystem = () => {
       [name]: value,
     }));
   };
-
+   useEffect(()=>{
+   console.log(reservations);
+   },[reservations])
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -165,6 +223,15 @@ const ReservationSystem = () => {
             <p className="text-gray-600 mb-6">Thank you for choosing our restaurant. We look forward to serving you!</p>
           </div>
         )}
+        {/* <div className="mt-12 bg-white shadow-xl rounded-lg p-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Your Reservations</h2>
+          {reservations.map((reservations, index) => (
+            <div key={index} className="p-4 border-b border-gray-200">
+              <p><strong>{reservations.name}</strong> - {reservations.date} at {reservations.time} ({reservations.guests} guests)</p>
+            </div>
+          ))}
+        </div> */}
+        <ReservationsTable  /> 
       </div>
     </div>
   );

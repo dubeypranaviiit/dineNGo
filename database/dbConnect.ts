@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const MONGODB_URL = process.env.MONGODB_URI as string
+const MONGODB_URL = process.env.MONGODB_URL as string
 if(!MONGODB_URL){
     throw new Error("Please define the Mongo env variable")
 }

@@ -6,7 +6,7 @@ export interface IReservation extends Document {
   email: string;
   date: Date;
   phone: number;
-  Time: string;
+  time: string;
   guests:number,
   isConfirmed:boolean,
   approvedBy:string,
@@ -30,7 +30,7 @@ const ReservationSchema: Schema = new Schema(
           type: Date,
           required: true 
           },
-    Time: { 
+    time: { 
         type: String, 
         required: true 
     },

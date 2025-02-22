@@ -110,7 +110,6 @@ const DishCard: React.FC<DishCardProps> = ({ name, description, price, image, ca
           loading="lazy"
         />
 
-        {/* Special Badge */}
         {isSpecial && (
           <div className="absolute top-2 right-2 bg-yellow-400 text-white p-2 rounded-full">
             <FaStar />

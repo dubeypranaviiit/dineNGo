@@ -15,7 +15,7 @@ const TeamMemberCard: React.FC<TeamMemberProps> = ({ name, role, bio, image }) =
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       className="group relative overflow-hidden rounded-lg shadow-lg "
-    // className="flex flex-row items-center justify-between"
+   
     >
       <Image src={image} alt={name} width={300} height={300} className="w-full h-64 object-cover transition-transform group-hover:scale-110" />
       <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-90 transition-opacity flex items-end p-6">

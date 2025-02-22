@@ -130,6 +130,7 @@ const Page = () => {
   return (
     <section className="w-full h-screen flex flex-col">
       {/* Sticky Filter Bar */}
+      
       <div className="w-full bg-white shadow-md py-4 px-6 sticky top-0 left-0 z-50 flex flex-col sm:flex-row gap-2 md:gap-4 items-center justify-between">
         {/* Search Bar */}
         <div className="relative w-full md:w-96">
