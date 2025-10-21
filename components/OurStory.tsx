@@ -10,7 +10,7 @@ const stats = [
 
 const OurStory: React.FC = () => {
   return (
-    <section className="py-20 px-6 bg-gray-100">
+    <section className="py-20 px-6 bg-white">
       <div className="max-w-5xl mx-auto text-center">
         <h2 className="text-5xl font-extrabold mb-6 text-gray-800">Our Story</h2>
         <p className="text-gray-600 text-lg max-w-3xl mx-auto mb-10 leading-relaxed">

@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-// Define TypeScript interface
 export interface IItem extends Document {
   name: string;
   category: string;
@@ -10,8 +9,6 @@ export interface IItem extends Document {
   image: string;
   isSpecial: boolean;
 }
-
-// Create Mongoose schema
 const ItemSchema: Schema = new Schema(
   {
     name: {

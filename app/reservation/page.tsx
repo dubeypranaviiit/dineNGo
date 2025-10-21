@@ -1,17 +1,18 @@
 "use client"
 import HeroSection from '@/components/about/HeroSection'
-import Footer from '@/components/Footer'
+
 import Header from '@/components/Header'
+import Reservation from '@/components/Reservation'
 import ReservationSystem from '@/components/ReservationSystem'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <Header />
+<Header />
 <HeroSection />
 <ReservationSystem/>
-<Footer />
+<Reservation />
     </div>
   )
 }

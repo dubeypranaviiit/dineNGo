@@ -1,71 +1,90 @@
-// "use client"
-// import React, { useState } from "react";
+// "use client";
+// import { useState } from "react";
 // import Image from "next/image";
-// import { FaLeaf, FaHamburger, FaSearch, FaStar } from "react-icons/fa";
-// import { BiDrink } from "react-icons/bi";
-// import { GiCupcake, GiHotMeal } from "react-icons/gi";
+// import { Badge } from "@/components/ui/badge";
+// import { Card, CardContent } from "@/components/ui/card";
+
 // interface DishCardProps {
 //   name: string;
 //   description: string;
 //   price: number;
 //   image: string;
 //   category: string;
+//   diet: "veg" | "non-veg";
+//   isSpecial: boolean;
 // }
 
-// const DishCard: React.FC<DishCardProps> = ({ name, description, price, image,category }) => {
-//   const [showFull, setShowFull] = useState(false);
-//   const shortDescription = description.length > 100 ? description.slice(0, 100) + "..." : description;
-//   const CategoryIcon = ({ category }) => {
-//     switch (category) {
-//       case "appetizers":
-//         return <GiHotMeal className="text-xl" />;
-//       case "main":
-//         return <FaHamburger className="text-xl" />;
-//       case "desserts":
-//         return <GiCupcake className="text-xl" />;
-//       case "beverages":
-//         return <BiDrink className="text-xl" />;
-//       default:
-//         return null;
-//     }
-//   };
-//   return (
-//     <div className="group relative overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:-translate-y-2">
-//       <Image
-//         src={image || "/placeholder.jpg"} 
-//         alt={name}
-//         width={250}
-//         height={150}
-//         className="w-full h-44 object-cover"
-//       />
-//       <div className="p-6 bg-white">
-//         <h3 className="text-xl font-semibold mb-2">{name}</h3>
-//         <p className="text-gray-600 mb-4">
-//           {showFull ? description : shortDescription}
-//         </p>
-//         {description.length > 100 && (
-//           <button
-//             onClick={() => setShowFull(!showFull)}
-//             className="text-amber-500 font-medium hover:underline"
-//           >
-//             {showFull ? "Read Less" : "Read More"}
-//           </button>
-//         )}
+// const DishCard = ({
+//   name,
+//   description,
+//   price,
+//   image,
+//   category,
+//   diet,
+//   isSpecial,
+// }: DishCardProps) => {
+//   const [expanded, setExpanded] = useState(false);
+//   const wordLimit = 25;
 
-//         <p className="text-amber-500 font-bold mt-2">${price.toFixed(2)}</p>
+//   const words = description.trim().split(" ");
+//   const isLong = words.length > wordLimit;
+//   const shortDescription = words.slice(0, wordLimit).join(" ") + "...";
+
+//   return (
+//     <Card className="rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden">
+//       <div className="relative h-48 w-full">
+//         <Image src={image} alt={name} fill className="object-cover" />
+//         {isSpecial && (
+//           <div className="absolute top-2 left-2">
+//             <Badge className="bg-yellow-500 text-white">Chef's Special</Badge>
+//           </div>
+//         )}
+//         <div className="absolute bottom-2 right-2">
+//           <Badge
+//             className={`text-white ${
+//               diet === "veg" ? "bg-green-600" : "bg-red-600"
+//             }`}
+//           >
+//             {diet.toUpperCase()}
+//           </Badge>
+//         </div>
 //       </div>
-//     </div>
+
+//       <CardContent className="p-4">
+//         <h3 className="text-lg font-semibold">{name}</h3>
+//         <p className="text-sm text-gray-600">
+//           {expanded || !isLong ? description : shortDescription}
+//           {isLong && (
+//             <button
+//               onClick={(e) => {
+//                 e.stopPropagation();
+//                 setExpanded((prev) => !prev);
+//               }}
+//               className="text-blue-600 ml-1 hover:underline text-xs"
+//             >
+//               {expanded ? "Read less" : "Read more"}
+//             </button>
+//           )}
+//         </p>
+//         <div className="flex justify-between items-center mt-3">
+//           <span className="font-medium text-gray-800">₹{price}</span>
+//           <Badge variant="outline" className="text-xs capitalize">
+//             {category}
+//           </Badge>
+//         </div>
+//       </CardContent>
+//     </Card>
 //   );
 // };
 
 // export default DishCard;
-"use client";
 
-import React, { useState } from "react";
+
+"use client";
+import { useState } from "react";
 import Image from "next/image";
-import { FaLeaf, FaHamburger, FaStar } from "react-icons/fa";
-import { BiDrink } from "react-icons/bi";
-import { GiCupcake, GiHotMeal } from "react-icons/gi";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface DishCardProps {
   name: string;
@@ -73,81 +92,68 @@ interface DishCardProps {
   price: number;
   image: string;
   category: string;
-  isSpecial?: boolean; // New prop for special dish
-  diet?: "veg" | "non-veg"; // New prop for diet type
+  diet: "veg" | "non-veg";
+  isSpecial?: boolean; // optional now
 }
 
-const DishCard: React.FC<DishCardProps> = ({ name, description, price, image, category, isSpecial, diet }) => {
-  const [showFull, setShowFull] = useState(false);
-  const shortDescription = description.length > 100 ? description.slice(0, 100) + "..." : description;
+const DishCard = ({
+  name,
+  description,
+  price,
+  image,
+  category,
+  diet,
+  isSpecial = false, // default to false
+}: DishCardProps) => {
+  const [expanded, setExpanded] = useState(false);
+  const wordLimit = 25;
 
-  // Category icon logic
-  const CategoryIcon = ({ category }: { category: string }) => {
-    switch (category) {
-      case "appetizers":
-        return <GiHotMeal className="text-xl" />;
-      case "main":
-        return <FaHamburger className="text-xl" />;
-      case "desserts":
-        return <GiCupcake className="text-xl" />;
-      case "beverages":
-        return <BiDrink className="text-xl" />;
-      default:
-        return null;
-    }
-  };
+  const words = description.trim().split(" ");
+  const isLong = words.length > wordLimit;
+  const shortDescription = words.slice(0, wordLimit).join(" ") + "...";
 
   return (
-    <div className="group relative overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:-translate-y-2">
-      {/* Dish Image */}
-      <div className="relative h-48 overflow-hidden">
-        <Image
-          src={image || "/placeholder.jpg"} 
-          alt={name}
-          width={250}
-          height={150}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-
+    <Card className="rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden">
+      <div className="relative h-48 w-full">
+        <Image src={image} alt={name} fill className="object-cover" />
         {isSpecial && (
-          <div className="absolute top-2 right-2 bg-yellow-400 text-white p-2 rounded-full">
-            <FaStar />
+          <div className="absolute top-2 left-2">
+            <Badge className="bg-yellow-500 text-white">Chef's Special</Badge>
           </div>
         )}
-      </div>
-
-      {/* Dish Details */}
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xl font-semibold">{name}</h3>
-          {/* Diet Icon */}
-          <div className={`${diet === "veg" ? "text-green-500" : "text-red-500"}`}>
-            {diet === "veg" ? <FaLeaf /> : <FaHamburger />}
-          </div>
-        </div>
-
-        {/* Dish Description */}
-        <p className="text-gray-600 mb-4">{showFull ? description : shortDescription}</p>
-        {description.length > 100 && (
-          <button
-            onClick={() => setShowFull(!showFull)}
-            className="text-amber-500 font-medium hover:underline"
+        <div className="absolute bottom-2 right-2">
+          <Badge
+            className={`text-white ${diet === "veg" ? "bg-green-600" : "bg-red-600"}`}
           >
-            {showFull ? "Read Less" : "Read More"}
-          </button>
-        )}
-
-        {/* Price and Category */}
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-lg font-bold text-green-600">${price.toFixed(2)}</span>
-          <div className="flex items-center gap-2">
-            <CategoryIcon category={category} />
-            <span className="capitalize text-sm text-gray-500">{category}</span>
-          </div>
+            {diet.toUpperCase()}
+          </Badge>
         </div>
       </div>
-    </div>
+
+      <CardContent className="p-4">
+        <h3 className="text-lg font-semibold">{name}</h3>
+        <p className="text-sm text-gray-600">
+          {expanded || !isLong ? description : shortDescription}
+          {isLong && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpanded((prev) => !prev);
+              }}
+              className="text-blue-600 ml-1 hover:underline text-xs"
+            >
+              {expanded ? "Read less" : "Read more"}
+            </button>
+          )}
+        </p>
+        <div className="flex justify-between items-center mt-3">
+          <span className="font-medium text-gray-800">₹{price}</span>
+          <Badge variant="outline" className="text-xs capitalize">
+            {category}
+          </Badge>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

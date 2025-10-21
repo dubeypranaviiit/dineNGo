@@ -1,31 +1,58 @@
-// "use client"
+// "use client";
+
 // import { useState } from "react";
 // import DishCard from "@/components/DishCard";
-// import { menu } from "@/public/data/data";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// import { Input } from "@/components/ui/input"; // ShadCN Input for Search
-// import { FaSearch } from "react-icons/fa"; // Search Icon
+// import { useItems } from "@/hooks/useItems";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { Input } from "@/components/ui/input";
+// import { FaSearch } from "react-icons/fa";
 
 // const Page = () => {
+//   const { items, isLoading, isError } = useItems();
 //   const [searchQuery, setSearchQuery] = useState("");
 //   const [selectedCategory, setSelectedCategory] = useState("all");
 //   const [selectedDiet, setSelectedDiet] = useState("all");
-//   const [priceRange, setPriceRange] = useState([0, 50]);
-//   const filteredMenu = menu.filter((dish) => {
-//     const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase());
-//     const matchesCategory = selectedCategory === "all" || dish.category === selectedCategory;
-//     const matchesDiet = selectedDiet === "all" || dish.diet === selectedDiet;
-//     const matchesPrice = dish.price >= priceRange[0] && dish.price <= priceRange[1];
-//     return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
+//   const [priceRange, setPriceRange] = useState([1, 200]);
 
+
+// const filteredMenu = items.filter((dish) => {
+//   const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+//   const matchesCategory =
+//     selectedCategory === "all" ||
+//     dish.category.toLowerCase() === selectedCategory.toLowerCase();
+
+//   const normalizeDiet = (diet: string) =>
+//     diet.toLowerCase().includes("non") ? "non-veg" : "veg";
+
+//   const matchesDiet =
+//     selectedDiet === "all" || normalizeDiet(dish.diet) === selectedDiet;
+
+//   const matchesPrice =
+//     dish.price >= priceRange[0] && dish.price <= priceRange[1];
+
+//   return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
+// });
+//   // Group dishes by category
+//   const categorizedMenu: { [key: string]: typeof items } = {};
+//   filteredMenu.forEach((dish) => {
+//     if (!categorizedMenu[dish.category]) {
+//       categorizedMenu[dish.category] = [];
+//     }
+//     categorizedMenu[dish.category].push(dish);
 //   });
 
 //   return (
-//     <section className="w-full h-screen">
-//       {/* Filters */}
-
-//    <div className="w-full  flex flex-col sm:mb-1 md:flex-row gap-2 md:mb-6 items-center justify-between mt-5 top-0 left-0 ">
-//         {/* Search Bar */}
+//     <section className="w-full flex flex-col px-4 py-16 gap-6">
+//       {/* Filter Bar */}
+//       <div className="w-full bg-white shadow-md py-4 px-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+//         {/* Search */}
 //         <div className="relative w-full md:w-96">
 //           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
 //           <Input
@@ -39,7 +66,7 @@
 
 //         {/* Category Filter */}
 //         <Select onValueChange={(value) => setSelectedCategory(value)}>
-//           <SelectTrigger className="w-[200px]">
+//           <SelectTrigger className="w-[180px]">
 //             <SelectValue placeholder="Select Category" />
 //           </SelectTrigger>
 //           <SelectContent>
@@ -50,9 +77,10 @@
 //             <SelectItem value="beverages">Beverages</SelectItem>
 //           </SelectContent>
 //         </Select>
+
 //         {/* Diet Filter */}
 //         <Select onValueChange={(value) => setSelectedDiet(value)}>
-//           <SelectTrigger className="w-[200px]">
+//           <SelectTrigger className="w-[180px]">
 //             <SelectValue placeholder="Select Diet" />
 //           </SelectTrigger>
 //           <SelectContent>
@@ -61,8 +89,12 @@
 //             <SelectItem value="non-veg">Non-Vegetarian</SelectItem>
 //           </SelectContent>
 //         </Select>
+
+//         {/* Price Filter */}
 //         <div className="flex flex-col items-center">
-//           <label className="text-gray-600 text-sm mb-1">Max Price: ${priceRange[1]}</label>
+//           <label className="text-sm text-gray-600 mb-1">
+//             Max Price: ₹{priceRange[1]}
+//           </label>
 //           <input
 //             type="range"
 //             min="0"
@@ -74,29 +106,36 @@
 //         </div>
 //       </div>
 
-    
-   
-      
-
-
-
-//       {/* Dish Grid */}
-//       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-10">
-//         {filteredMenu.length > 0 ? (
-//           filteredMenu.map((dish, index) => (
-//             <DishCard
-//               key={index}
-//               name={dish.name}
-//               description={dish.description}
-//               image={dish.image}
-//               price={dish.price}
-//               category={dish.category}
-//               isSpecial={dish.isSpecial}
-//               diet={dish.diet}
-//             />
+//       {/* Dish Display */}
+//       <div className="p-4 space-y-10">
+//         {isLoading ? (
+//           <p className="text-center text-gray-500">Loading menu...</p>
+//         ) : isError ? (
+//           <p className="text-center text-red-500">Failed to load menu items.</p>
+//         ) : Object.keys(categorizedMenu).length > 0 ? (
+//           Object.entries(categorizedMenu).map(([category, dishes]) => (
+//             <div key={category}>
+//               <h2 className="text-2xl font-semibold capitalize  text-center mb-4 border-b pb-2">
+//                 {category.replace("-", " ")}
+//               </h2>
+//               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+//                 {dishes.map((dish, index) => (
+//                   <DishCard
+//                      key={dish._id}
+//                     name={dish.name}
+//                     description={dish.description}
+//                     image={dish.image}
+//                     price={dish.price}
+//                     category={dish.category}
+//                     isSpecial={dish.isSpecial}
+//                     diet={dish.diet}
+//                   />
+//                 ))}
+//               </div>
+//             </div>
 //           ))
 //         ) : (
-//           <p className="text-center col-span-full text-gray-600">No dishes found.</p>
+//           <p className="text-center text-gray-600">No dishes found.</p>
 //         )}
 //       </div>
 //     </section>
@@ -104,35 +143,73 @@
 // };
 
 // export default Page;
-
 "use client";
+
 import { useState } from "react";
 import DishCard from "@/components/DishCard";
-import { menu } from "@/public/data/data";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input"; // ShadCN Input for Search
-import { FaSearch } from "react-icons/fa"; // Search Icon
+import { useItems } from "@/hooks/useItems";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { FaSearch } from "react-icons/fa";
 
-const Page = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedDiet, setSelectedDiet] = useState("all");
-  const [priceRange, setPriceRange] = useState([0, 10**6]);
+// Type for a dish
+interface Dish {
+  _id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  category: string;
+  isSpecial?: boolean; // optional
+  diet: string;
+}
 
-  const filteredMenu = menu.filter((dish) => {
+const Page: React.FC = () => {
+  const { items, isLoading, isError } = useItems(); 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedDiet, setSelectedDiet] = useState<string>("all");
+  const [priceRange, setPriceRange] = useState<[number, number]>([1, 200]);
+
+  const filteredMenu = (items as Dish[]).filter((dish) => {
     const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || dish.category === selectedCategory;
-    const matchesDiet = selectedDiet === "all" || dish.diet === selectedDiet;
-    const matchesPrice = dish.price >= priceRange[0] && dish.price <= priceRange[1];
+
+    const matchesCategory =
+      selectedCategory === "all" ||
+      dish.category.toLowerCase() === selectedCategory.toLowerCase();
+
+    const normalizeDiet = (diet: string) =>
+      diet.toLowerCase().includes("non") ? "non-veg" : "veg";
+
+    const matchesDiet =
+      selectedDiet === "all" || normalizeDiet(dish.diet) === selectedDiet;
+
+    const matchesPrice =
+      dish.price >= priceRange[0] && dish.price <= priceRange[1];
+
     return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
   });
 
+  // Group dishes by category
+  const categorizedMenu: { [key: string]: Dish[] } = {};
+  filteredMenu.forEach((dish) => {
+    if (!categorizedMenu[dish.category]) {
+      categorizedMenu[dish.category] = [];
+    }
+    categorizedMenu[dish.category].push(dish);
+  });
+
   return (
-    <section className="w-full h-screen flex flex-col">
-      {/* Sticky Filter Bar */}
-      
-      <div className="w-full bg-white shadow-md py-4 px-6 sticky top-0 left-0 z-50 flex flex-col sm:flex-row gap-2 md:gap-4 items-center justify-between">
-        {/* Search Bar */}
+    <section className="w-full flex flex-col px-4 py-16 gap-6">
+      {/* Filter Bar */}
+      <div className="w-full bg-white shadow-md py-4 px-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        {/* Search */}
         <div className="relative w-full md:w-96">
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
@@ -146,7 +223,7 @@ const Page = () => {
 
         {/* Category Filter */}
         <Select onValueChange={(value) => setSelectedCategory(value)}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Category" />
           </SelectTrigger>
           <SelectContent>
@@ -160,7 +237,7 @@ const Page = () => {
 
         {/* Diet Filter */}
         <Select onValueChange={(value) => setSelectedDiet(value)}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Diet" />
           </SelectTrigger>
           <SelectContent>
@@ -172,11 +249,13 @@ const Page = () => {
 
         {/* Price Filter */}
         <div className="flex flex-col items-center">
-          <label className="text-gray-600 text-sm mb-1">Max Price: ${priceRange[1]}</label>
+          <label className="text-sm text-gray-600 mb-1">
+            Max Price: ₹{priceRange[1]}
+          </label>
           <input
             type="range"
             min="0"
-            max="100"
+            max="200"
             value={priceRange[1]}
             onChange={(e) => setPriceRange([0, Number(e.target.value)])}
             className="w-40"
@@ -184,29 +263,41 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Scrollable Dish Grid */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {filteredMenu.length > 0 ? (
-            filteredMenu.map((dish, index) => (
-              <DishCard
-                key={index}
-                name={dish.name}
-                description={dish.description}
-                image={dish.image}
-                price={dish.price}
-                category={dish.category}
-                isSpecial={dish.isSpecial}
-                diet={dish.diet}
-              />
-            ))
-          ) : (
-            <p className="text-center col-span-full text-gray-600">No dishes found.</p>
-          )}
-        </div>
+      {/* Dish Display */}
+      <div className="p-4 space-y-10">
+        {isLoading ? (
+          <p className="text-center text-gray-500">Loading menu...</p>
+        ) : isError ? (
+          <p className="text-center text-red-500">Failed to load menu items.</p>
+        ) : Object.keys(categorizedMenu).length > 0 ? (
+          Object.entries(categorizedMenu).map(([category, dishes]) => (
+            <div key={category}>
+              <h2 className="text-2xl font-semibold capitalize text-center mb-4 border-b pb-2">
+                {category.replace("-", " ")}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {dishes.map((dish) => (
+                  <DishCard
+                    key={dish._id}
+                    name={dish.name}
+                    description={dish.description}
+                    image={dish.image}
+                    price={dish.price}
+                    category={dish.category}
+                    isSpecial={dish.isSpecial ?? false} // ✅ Default to false
+                     diet={dish.diet === "veg" ? "veg" : "non-veg"} 
+                  />
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-600">No dishes found.</p>
+        )}
       </div>
     </section>
   );
 };
 
 export default Page;
+

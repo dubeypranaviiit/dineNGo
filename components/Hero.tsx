@@ -7,7 +7,7 @@ import admin from "@/public/admin/admin";
 const Hero: React.FC = () => {
   return (
     <div className="relative h-screen">
-      {/* Background Image */}
+    
       <div className="absolute inset-0">
         <Image
           src={admin.bg_rest}
@@ -30,7 +30,7 @@ const Hero: React.FC = () => {
             Experience culinary excellence in every bite
           </p>
 
-          {/* Buttons */}
+     
           <div className="space-x-4">
             <Link href="/reservation">
               <button className="bg-amber-500 text-white px-8 py-3 rounded-full hover:bg-amber-600 transition duration-300">

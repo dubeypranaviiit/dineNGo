@@ -1,74 +1,118 @@
 import { NextResponse } from "next/server";
-import { dbConnect } from "@/database/dbConnect"; // Ensure dbConnect is correctly set up
-import Reservation from "@/database/models/reservation.modal";// Import the Reservation model
-const load = async()=>{
-  dbConnect();
-}
-await load();
+import Stripe from "stripe";
+import { dbConnect } from "@/database/dbConnect";
+import Reservation from "@/database/models/reservation.modal";
+import Table from "@/database/models/table.modal";
+import User from "@/database/models/user.modal"
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
 export async function POST(req: Request) {
   try {
-    await dbConnect(); 
+    await dbConnect();
     const data = await req.json();
-    const { name, email, phone, date, time, guests } = data;
+    const { name, email, phone, date, time, guests, tableId } = data;
+  console.log(name,email,phone,date,guests,tableId);
     if (!name || !email || !phone || !date || !time || !guests) {
-      return NextResponse.json(
-        { success: false, message: "All fields are required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
-    const newReservation = await Reservation.create(data)
 
+    let assignedTableId = tableId;
+    if (!tableId) {
+      const table = await Table.findOne({ status: "available" }).sort({ seats: 1 });
+      console.log(table);
+      if (!table) return NextResponse.json({ error: "No tables available" }, { status: 400 });
+      assignedTableId = table._id.toString();
+    }
+
+    const existing = await Reservation.findOne({ date, time, tableId: assignedTableId });
+    if (existing) {
+      console.log(`existing`);
+      return NextResponse.json({ error: "This table is already booked for this time" }, { status: 400 });
+    }
+    const user = await User.findOne({ email });
+   
+    const reservation = await Reservation.create({
+       user: user?._id || null,
+      name,
+      email,
+      phone,
+      date,
+      time,
+      guests,
+      tableId: assignedTableId,
+      paymentStatus: "pending",
+      isConfirmed: false,
+    });
+
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "inr",
+            product_data: {
+              name: `Table Reservation for ${date} at ${time}`,
+            },
+            unit_amount: 500 * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `${process.env.NEXT_PUBLIC_URL}/reservation-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}/reservation-cancel`,
+      metadata: {
+        reservationId: reservation._id.toString(),
+        name,
+        email,
+        phone,
+        date,
+        time,
+        guests,
+        tableId: assignedTableId,
+        amount: 500, 
+      },
+    });
+
+   
+    reservation.stripeSessionId = session.id;
+    await reservation.save();
+
+    return NextResponse.json({ url: session.url, reservationId: reservation._id });
+  } catch (err: any) {
+    console.error("Reservation error:", err);
+    return NextResponse.json({ error: "Failed to create reservation" }, { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    await dbConnect();
+
+    const url = new URL(req.url);
+    const clerkId = url.searchParams.get("clerkId");
+
+    if (!clerkId) {
+      return NextResponse.json({ message: "Missing clerkId" }, { status: 400 });
+    }
+
+    const dbUser = await User.findOne({ clerkUserId: clerkId });
+    if (!dbUser) {
+      console.log('user not found');
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    const reservations = await Reservation.find({ user: dbUser._id }).sort({ createdAt: -1 });
+
+    return NextResponse.json({ reservations }, { status: 200 });
+  } catch (err: any) {
+    console.error("Fetch reservations error:", err);
     return NextResponse.json(
-      { success: true, reservation: newReservation },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.log("Error creating reservation:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to create reservation. Try again later." },
+      { message: "Internal server error", error: err.message },
       { status: 500 }
     );
   }
 }
-export async function GET(){
-    try{
-      await  dbConnect();
-        const reservationData = await Reservation.find({})
-        return NextResponse.json({
-            success:true,
-            message:`successfully fetched reservation data`,
-            reservationData
-        },{status:200})
-    }catch(error){
-        console.log(`Error while getting reservation:${error}`);
-        return NextResponse.json({
-            success:false,
-            message:`Something went wrong`
-        },{status:500})
-    }
-}
-export async function  PUT(req:Request){
-    try{
-       const data = await req.json();
-       const {reservationId,isConfirmed} = data;
-       if (!reservationId) {
-        return NextResponse.json(
-            { success: false, message: "Reservation ID is required." },
-            { status: 400 }
-        );
-    }
-       const reservation = (await Reservation.findByIdAndUpdate(reservationId, { isConfirmed },{new:true}))
-       return NextResponse.json({
-           success:true,
-           message:`successfully fetched reservation data`,
-           reservation
-       },{status:200})
-    }catch(error){
-        console.log(`Error while updating data:${error}`);
-        return NextResponse.json({
-            success:false,
-            message:'Something went wrong, please try again later'
-        },{status:500})
-    }
 
-}
+

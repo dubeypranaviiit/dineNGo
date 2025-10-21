@@ -5,13 +5,13 @@ import Image from 'next/image';
 import { useState, useRef, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-// import { IStaff } from "@/database/models/staff.modal";
+
 
 const role = ['Server', 'Bartender', 'Busser', 'Cashier', 'Line cook','Prep cook','Dishwasher','Executive chef','Sous chef','Restaurant manager'];
 const statusStaff = ['active', 'inactive', 'upcoming'];
 
 const AddStaff = () => {
-    // const [staff,setStaff] = useState<IStaff>({});
+  
   const [formData, setFormData] = useState({
         name: "",
         role: "",
@@ -28,6 +28,7 @@ const AddStaff = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      // @ts-expect-error
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,

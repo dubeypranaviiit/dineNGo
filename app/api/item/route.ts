@@ -1,7 +1,7 @@
 import Item from "@/database/models/item.modal";
 import {dbConnect} from "@/database/dbConnect";
 import { NextResponse } from "next/server";
-// import { writeFile} from "fs";
+
 import { writeFile } from 'fs/promises';
 
 
@@ -18,23 +18,7 @@ export async function GET() {
         return NextResponse.json({ message: "Error fetching items", error }, { status: 500 });
     }
 }
-// export async function POST(req:Request){
-// try{
-//     await dbConnect();
-//     const data = await req.json();
-//     const newItem  = await Item.create(data);
-//     return NextResponse.json({
-//         success:true,
-//         newItem
-//     },{status:201})
-// }catch(err){
-//     console.log(err);
-//     return NextResponse.json({
-//         success:false,
-//         message:'please try again to add item'
-//     })
-// }
-// }
+
 export async function POST(req:Request){
     console.log(`Api  request come`);
     await dbConnect();
@@ -43,7 +27,7 @@ export async function POST(req:Request){
     const formData = await req.formData();
     const timestamp = Date.now();
     console.log(formData,":formData");
-    // const image = formData.get('image');
+    
     const image = formData.getAll('image').find(file => file instanceof File);
 
     if (!image) {
@@ -61,14 +45,14 @@ export async function POST(req:Request){
         name: formData.get('name') as string,
         category: formData.get('category') as string,
         diet: formData.get('diet') as string,
-        price: Number(formData.get('price')), // Ensure price is a number
+        price: Number(formData.get('price')), 
         description: formData.get('description') as string,
-        image: imageUrl, // Assuming imageUrl is already set correctly
-        isSpecial: formData.get('isSpecial') === 'true', // Convert to boolean
+        image: imageUrl, 
+        isSpecial: formData.get('isSpecial') === 'true',
     };
     
  await Item.create(ItemData);
- console.log(`Blog Saved`);
+ console.log(`item Saved`);
 
      return NextResponse.json({
         success:true,

@@ -1,144 +1,279 @@
-"use client";
+// "use client";
+// import { Input } from "@/components/ui/input";
+// import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+// import axios from "axios";
+// import { toast } from "react-toastify";
+
+// interface Reservation {
+//   _id: string;
+//   name: string;
+//   email: string;
+//   approvedBy?: string;
+//   isConfirmed: boolean;
+// }
+
+// interface ReservationModalProps {
+//   reservation: Reservation | null;
+//   onClose: () => void;
+// }
+
+// const statusOptions = [
+//   { label: "Confirmed", value: "confirmed" },
+//   { label: "Pending", value: "pending" },
+// ];
+
+// const ReservationModal: React.FC<ReservationModalProps> = ({
+//   reservation,
+//   onClose,
+// }) => {
+//   const [loading, setLoading] = useState(false);
+//   const [formData, setFormData] = useState({
+//     approvedBy: "",
+//     status: "",
+//   });
+
+
+//   useEffect(() => {
+//     if (reservation) {
+//       setFormData({
+//         approvedBy: reservation.approvedBy || "",
+//         status: reservation.isConfirmed ? "confirmed" : "pending",
+//       });
+//     }
+//   }, [reservation]);
+
+//   const handleChange = (
+//     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+//   ) => {
+//     const { name, value } = e.target;
+//     setFormData((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleSubmit = async (e: FormEvent) => {
+//     e.preventDefault();
+//     if (!reservation?._id) return;
+
+//     setLoading(true);
+
+//     try {
+//       const isConfirmed = formData.status === "confirmed";
+
+//       const response = await axios.put(
+//         "/api/reservations",
+//         {
+//           reservationId: reservation._id,
+//           isConfirmed,
+//           approvedBy: formData.approvedBy,
+//         },
+//         {
+//           headers: { "Content-Type": "application/json" },
+//         }
+//       );
+
+//       if (response.data.success) {
+//         toast.success(" Reservation updated successfully!");
+//         onClose();
+//       } else {
+//         toast.error(" Failed to update reservation.");
+//       }
+//     } catch (error) {
+//       console.error("Error updating reservation:", error);
+//       toast.error("Something went wrong!");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   if (!reservation) return null;
+
+//   return (
+//     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+//       <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
+//         <h2 className="text-2xl font-bold mb-4 text-gray-800">
+//           Edit Reservation
+//         </h2>
+
+//         <form onSubmit={handleSubmit} className="space-y-4">
+        
+//           <div className="grid grid-cols-2 gap-3">
+//             <Input
+//               type="text"
+//               value={reservation.name}
+//               className="w-full p-3 border rounded-lg bg-gray-100"
+//               readOnly
+//             />
+//             <Input
+//               type="text"
+//               value={reservation.email}
+//               className="w-full p-3 border rounded-lg bg-gray-100"
+//               readOnly
+//             />
+//           </div>
+
+//           <Input
+//             type="text"
+//             name="approvedBy"
+//             placeholder="Approved By"
+//             value={formData.approvedBy}
+//             onChange={handleChange}
+//             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+//             required
+//           />
+
+         
+//           <select
+//             name="status"
+//             value={formData.status}
+//             onChange={handleChange}
+//             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+//             required
+//           >
+//             <option value="">Select Status</option>
+//             {statusOptions.map((opt) => (
+//               <option key={opt.value} value={opt.value}>
+//                 {opt.label}
+//               </option>
+//             ))}
+//           </select>
+
+        
+//           <div className="flex gap-3 mt-6">
+//             <button
+//               type="submit"
+//               className="flex-1 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
+//               disabled={loading}
+//             >
+//               {loading ? "Updating..." : "Update"}
+//             </button>
+//             <button
+//               type="button"
+//               onClick={onClose}
+//               className="flex-1 py-3 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all"
+//             >
+//               Cancel
+//             </button>
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ReservationModal;
+'use client';
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
-import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-interface Reservation {
-  id: string;
-  status: string;
-  
-}
+import { Reservation } from "./types";
 
 interface ReservationModalProps {
   reservation: Reservation | null;
   onClose: () => void;
-  reservationId: string;
 }
 
-const statusOptions = ["confirmed", "pending", "canceled"];
+const statusOptions = [
+  { label: "Confirmed", value: "confirmed" },
+  { label: "Pending", value: "pending" },
+];
 
-const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, onClose, reservationId }) => {
+const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    id: reservationId || "",
-    approvedBy: reservation?.email || "",
-    status:" "
-   
+    approvedBy: "",
+    status: "",
   });
 
-  // Populate form when reservation changes
   useEffect(() => {
     if (reservation) {
       setFormData({
-        id: reservation.id || reservationId,
         approvedBy: reservation.approvedBy || "",
-        status:""
+        status: reservation.status,
       });
     }
-  }, [reservation, reservationId]);
+  }, [reservation]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (!reservation?.id) return;
 
+    setLoading(true);
     try {
-      const response = await axios.put("/api/reservation", formData, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const isConfirmed = formData.status === "confirmed";
+
+      const response = await axios.put(
+        "/api/reservations",
+        {
+          reservationId: reservation.id,
+          isConfirmed,
+          approvedBy: formData.approvedBy,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
 
       if (response.data.success) {
         toast.success("Reservation updated successfully!");
-        setFormData({ id: "" ,  approvedBy:""});
         onClose();
       } else {
-        toast.error("Error updating reservation data.");
+        toast.error("Failed to update reservation.");
       }
     } catch (error) {
+      console.error("Error updating reservation:", error);
       toast.error("Something went wrong!");
-      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
+  if (!reservation) return null;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Edit Reservation</h2>
+      <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Edit Reservation</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-3">
-          <div className="grid grid-cols-2 gap-2">
-          <Input
-              type="text"
-              name="approvedBy"
-              placeholder="approved By"
-              value={reservationId}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-              readOnly
-            />
-             <Input
-              type="text"
-              name="approvedBy"
-              placeholder="Guest Name"
-              value={reservation.name}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-              readOnly
-            />
-            <Input
-              type="text"
-              name="approvedBy"
-              placeholder="approved By"
-              value={formData. approvedBy}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            {/* <Input
-              type="text"
-              name="tableNo"
-              placeholder="approved By"
-              value={formData. approvedBy}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-              required
-            /> */}
-         
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-              required
-            >
-              <option value="">Select Status</option>
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <Input type="text" value={reservation.name} className="w-full p-3 border rounded-lg bg-gray-100" readOnly />
+            <Input type="text" value={reservation.email} className="w-full p-3 border rounded-lg bg-gray-100" readOnly />
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Update Reservation"}
-          </button>
+          <Input
+            type="text"
+            name="approvedBy"
+            placeholder="Approved By"
+            value={formData.approvedBy}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+            required
+          />
 
-          <button type="button" onClick={onClose} className="w-full py-3 mt-2 bg-gray-200 rounded-lg">
-            Cancel
-          </button>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+            required
+          >
+            <option value="">Select Status</option>
+            {statusOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+
+          <div className="flex gap-3 mt-6">
+            <button type="submit" disabled={loading} className="flex-1 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all">
+              {loading ? "Updating..." : "Update"}
+            </button>
+            <button type="button" onClick={onClose} className="flex-1 py-3 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all">
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -146,3 +281,4 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, onClos
 };
 
 export default ReservationModal;
+

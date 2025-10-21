@@ -68,23 +68,50 @@ export async function POST(req:Request){
     }
 
 }
-export async function DELETE(staffId:string) {
-     await dbConnect();
-     try{
-        // const staffId = req.json();
-        await Staff.findByIdAndDelete(staffId);
-        return NextResponse.json({
-            success:true,
-            message:`Staff deleted successfully`
-        })
-     }catch(error){
-        console.log(`Error while deleting data:${error}`);
-        return NextResponse.json({
-            success:false,
-            message:`Something went wrong please try again later`
-        })
-     }
+// export async function DELETE(staffId:string) {
+//      await dbConnect();
+//      try{
+//         // const staffId = req.json();
+//         await Staff.findByIdAndDelete(staffId);
+//         return NextResponse.json({
+//             success:true,
+//             message:`Staff deleted successfully`
+//         })
+//      }catch(error){
+//         console.log(`Error while deleting data:${error}`);
+//         return NextResponse.json({
+//             success:false,
+//             message:`Something went wrong please try again later`
+//         })
+//      }
+// }
+export async function DELETE(req: Request) {
+  await dbConnect();
+  try {
+    const { staffId } = await req.json(); // extract staffId from request body
+
+    if (!staffId) {
+      return NextResponse.json({
+        success: false,
+        message: "staffId is required",
+      }, { status: 400 });
+    }
+
+    await Staff.findByIdAndDelete(staffId);
+
+    return NextResponse.json({
+      success: true,
+      message: "Staff deleted successfully",
+    });
+  } catch (error) {
+    console.log(`Error while deleting data: ${error}`);
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong, please try again later",
+    }, { status: 500 });
+  }
 }
+
 export async function PUT(req:Request) {
     await dbConnect();
     console.log(`request came`);

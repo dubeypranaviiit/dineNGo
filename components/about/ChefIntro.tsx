@@ -2,7 +2,7 @@
 import { FaAward, FaQuoteLeft } from "react-icons/fa";
 import { motion } from "framer-motion";
  import Image from "next/image";
-//  import { chefs } from "@/public/data/data";
+
 import chefs from "@/public/assets/images/chefs/chefs";
 
 const ChefIntro = () => {
