@@ -175,7 +175,7 @@ const Page: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDiet, setSelectedDiet] = useState<string>("all");
-  const [priceRange, setPriceRange] = useState<[number, number]>([1, 200]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([40, 1000]);
 
   const filteredMenu = (items as Dish[]).filter((dish) => {
     const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase());

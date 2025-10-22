@@ -18,7 +18,7 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDiet, setSelectedDiet] = useState("all");
-  const [priceRange, setPriceRange] = useState([1, 200]);
+  const [priceRange, setPriceRange] = useState([1, 1000]);
 
 
 const filteredMenu = items.filter((dish) => {
