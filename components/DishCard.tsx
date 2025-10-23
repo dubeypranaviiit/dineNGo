@@ -87,6 +87,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface DishCardProps {
+    _id: string;   
   name: string;
   description: string;
   price: number;
@@ -103,7 +104,7 @@ const DishCard = ({
   image,
   category,
   diet,
-  isSpecial = false, // default to false
+  isSpecial = false, 
 }: DishCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const wordLimit = 25;

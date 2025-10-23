@@ -97,7 +97,7 @@ const Update = () => {
     if (!confirm("Are you sure you want to delete this item?")) return;
 
     try {
-      await axios.delete(`/api/food/${id}`);
+      await axios.delete(`/api/item/${id}`);
       setDishes(dishes.filter((dish) => dish._id !== id));
     } catch (error) {
       console.error("Delete failed:", error);

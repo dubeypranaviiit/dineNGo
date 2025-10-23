@@ -13,34 +13,45 @@
 // import { Input } from "@/components/ui/input";
 // import { FaSearch } from "react-icons/fa";
 
-// const Page = () => {
-//   const { items, isLoading, isError } = useItems();
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const [selectedCategory, setSelectedCategory] = useState("all");
-//   const [selectedDiet, setSelectedDiet] = useState("all");
-//   const [priceRange, setPriceRange] = useState([1, 200]);
+// interface Dish {
+//   _id: string;
+//   name: string;
+//   description: string;
+//   image: string;
+//   price: number;
+//   category: string;
+//   isSpecial?: boolean; // optional
+//   diet: string;
+// }
 
+// const Page: React.FC = () => {
+//   const { items, isLoading, isError } = useItems(); 
+//   const [searchQuery, setSearchQuery] = useState<string>("");
+//   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+//   const [selectedDiet, setSelectedDiet] = useState<string>("all");
+//   const [priceRange, setPriceRange] = useState<[number, number]>([40, 1000]);
 
-// const filteredMenu = items.filter((dish) => {
-//   const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase());
+//   const filteredMenu = (items as Dish[]).filter((dish) => {
+//     const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-//   const matchesCategory =
-//     selectedCategory === "all" ||
-//     dish.category.toLowerCase() === selectedCategory.toLowerCase();
+//     const matchesCategory =
+//       selectedCategory === "all" ||
+//       dish.category.toLowerCase() === selectedCategory.toLowerCase();
 
-//   const normalizeDiet = (diet: string) =>
-//     diet.toLowerCase().includes("non") ? "non-veg" : "veg";
+//     const normalizeDiet = (diet: string) =>
+//       diet.toLowerCase().includes("non") ? "non-veg" : "veg";
 
-//   const matchesDiet =
-//     selectedDiet === "all" || normalizeDiet(dish.diet) === selectedDiet;
+//     const matchesDiet =
+//       selectedDiet === "all" || normalizeDiet(dish.diet) === selectedDiet;
 
-//   const matchesPrice =
-//     dish.price >= priceRange[0] && dish.price <= priceRange[1];
+//     const matchesPrice =
+//       dish.price >= priceRange[0] && dish.price <= priceRange[1];
 
-//   return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
-// });
+//     return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
+//   });
+
 //   // Group dishes by category
-//   const categorizedMenu: { [key: string]: typeof items } = {};
+//   const categorizedMenu: { [key: string]: Dish[] } = {};
 //   filteredMenu.forEach((dish) => {
 //     if (!categorizedMenu[dish.category]) {
 //       categorizedMenu[dish.category] = [];
@@ -98,7 +109,7 @@
 //           <input
 //             type="range"
 //             min="0"
-//             max="100"
+//             max="200"
 //             value={priceRange[1]}
 //             onChange={(e) => setPriceRange([0, Number(e.target.value)])}
 //             className="w-40"
@@ -115,20 +126,20 @@
 //         ) : Object.keys(categorizedMenu).length > 0 ? (
 //           Object.entries(categorizedMenu).map(([category, dishes]) => (
 //             <div key={category}>
-//               <h2 className="text-2xl font-semibold capitalize  text-center mb-4 border-b pb-2">
+//               <h2 className="text-2xl font-semibold capitalize text-center mb-4 border-b pb-2">
 //                 {category.replace("-", " ")}
 //               </h2>
 //               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-//                 {dishes.map((dish, index) => (
+//                 {dishes.map((dish) => (
 //                   <DishCard
-//                      key={dish._id}
+//                     key={dish._id}
 //                     name={dish.name}
 //                     description={dish.description}
 //                     image={dish.image}
 //                     price={dish.price}
 //                     category={dish.category}
-//                     isSpecial={dish.isSpecial}
-//                     diet={dish.diet}
+//                     isSpecial={dish.isSpecial ?? false} // ✅ Default to false
+//                      diet={dish.diet === "veg" ? "veg" : "non-veg"} 
 //                   />
 //                 ))}
 //               </div>
@@ -145,9 +156,10 @@
 // export default Page;
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DishCard from "@/components/DishCard";
-import { useItems } from "@/hooks/useItems";
+import { useItemStore } from "@/store/useItemStore";
+import { getCachedItems } from "@/utils/getCachedItems";
 import {
   Select,
   SelectContent,
@@ -158,7 +170,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { FaSearch } from "react-icons/fa";
 
-// Type for a dish
 interface Dish {
   _id: string;
   name: string;
@@ -166,18 +177,52 @@ interface Dish {
   image: string;
   price: number;
   category: string;
-  isSpecial?: boolean; // optional
+  isSpecial?: boolean;
   diet: string;
 }
 
 const Page: React.FC = () => {
-  const { items, isLoading, isError } = useItems(); 
+  const itemsFromStore = useItemStore((state) => state.items);
+  const loadItems = useItemStore((state) => state.loadItems);
+
+  // Null-safe cached items
+  const cachedItems = getCachedItems() || [];
+
+  // Convert store/cache items to Dish[]
+  const mapToDish = (item: any): Dish => ({
+    _id: item._id || item.id || "",
+    name: item.name,
+    description: item.description,
+    image: item.image,
+    price: item.price,
+    category: item.category,
+    isSpecial: item.isSpecial ?? false,
+    diet: item.diet,
+  });
+
+  const initialItems: Dish[] = (itemsFromStore.length ? itemsFromStore : cachedItems).map(mapToDish);
+
+  const [items, setItems] = useState<Dish[]>(initialItems);
+  const [isLoading, setIsLoading] = useState(items.length === 0);
+  const [isError, setIsError] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDiet, setSelectedDiet] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<[number, number]>([40, 1000]);
 
-  const filteredMenu = (items as Dish[]).filter((dish) => {
+  // Load fresh items in the background
+  useEffect(() => {
+    if (items.length === 0) {
+      loadItems()
+        .then(() => setItems((getCachedItems() || []).map(mapToDish)))
+        .catch(() => setIsError(true))
+        .finally(() => setIsLoading(false));
+    }
+  }, []);
+
+  // Filtering
+  const filteredMenu = items.filter((dish) => {
     const matchesSearch = dish.name.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesCategory =
@@ -196,12 +241,10 @@ const Page: React.FC = () => {
     return matchesSearch && matchesCategory && matchesDiet && matchesPrice;
   });
 
-  // Group dishes by category
+  // Group by category
   const categorizedMenu: { [key: string]: Dish[] } = {};
   filteredMenu.forEach((dish) => {
-    if (!categorizedMenu[dish.category]) {
-      categorizedMenu[dish.category] = [];
-    }
+    if (!categorizedMenu[dish.category]) categorizedMenu[dish.category] = [];
     categorizedMenu[dish.category].push(dish);
   });
 
@@ -255,7 +298,7 @@ const Page: React.FC = () => {
           <input
             type="range"
             min="0"
-            max="200"
+            max="1000"
             value={priceRange[1]}
             onChange={(e) => setPriceRange([0, Number(e.target.value)])}
             className="w-40"
@@ -279,13 +322,14 @@ const Page: React.FC = () => {
                 {dishes.map((dish) => (
                   <DishCard
                     key={dish._id}
+                    _id={dish._id}
                     name={dish.name}
                     description={dish.description}
                     image={dish.image}
                     price={dish.price}
                     category={dish.category}
-                    isSpecial={dish.isSpecial ?? false} // ✅ Default to false
-                     diet={dish.diet === "veg" ? "veg" : "non-veg"} 
+                    isSpecial={dish.isSpecial ?? false}
+                    diet={dish.diet === "veg" ? "veg" : "non-veg"}
                   />
                 ))}
               </div>
@@ -300,4 +344,3 @@ const Page: React.FC = () => {
 };
 
 export default Page;
-

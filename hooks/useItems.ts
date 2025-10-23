@@ -2,24 +2,16 @@
 // import useSWR from "swr";
 // import axios from "axios";
 
-// const fetcher = (url: string) => axios.get(url).then(res => res.data.items);
-
-// export const useItems = () => {
-//   const { data, error, isLoading } = useSWR("/api/item", fetcher);
-//   return {
-//     items: data || [],
-//     isLoading,
-//     isError: error,
-//   };
+// interface ApiResponse<T> {
+//   items: T[];
+// }
+// const fetcher = async <T>(url: string): Promise<T[]> => {
+//   const res = await axios.get<ApiResponse<T>>(url);
+//   return res.data.items;
 // };
-// import useSWR from "swr";
-// import axios from "axios";
-
-// // Generic fetcher
-// const fetcher = <T>(url: string) => axios.get<T>(url).then(res => res.data.items);
 
 // export const useItems = <T = any>() => {
-//   const { data, error, isLoading } = useSWR<T[]>("/api/item", url => fetcher<T>(url));
+//   const { data, error, isLoading } = useSWR<T[]>("/api/item", (url: string) => fetcher<T>(url));
 
 //   return {
 //     items: data || [],
@@ -27,26 +19,22 @@
 //     isError: error,
 //   };
 // };
-import useSWR from "swr";
-import axios from "axios";
 
-interface ApiResponse<T> {
-  items: T[];
-}
+import { useEffect, useState } from "react";
+import { useItemStore } from "@/store/useItemStore";
 
-// Generic fetcher
-const fetcher = async <T>(url: string): Promise<T[]> => {
-  const res = await axios.get<ApiResponse<T>>(url);
-  return res.data.items;
+export const useItems = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  const items = useItemStore((state) => state.items);
+  const loadItems = useItemStore((state) => state.loadItems);
+
+  useEffect(() => {
+    loadItems()
+      .catch(() => setIsError(true))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  return { items, isLoading, isError };
 };
-
-export const useItems = <T = any>() => {
-  const { data, error, isLoading } = useSWR<T[]>("/api/item", (url: string) => fetcher<T>(url));
-
-  return {
-    items: data || [],
-    isLoading,
-    isError: error,
-  };
-};
-

@@ -17,7 +17,7 @@ export const menu: Dish[] = [
     id: 1,
     name: "Paneer Butter Masala",
     price: 250,
-    image: "/images/paneer.jpg",
+    image: "/images/paneer.png",
     ingredients: "Paneer, Tomato, Cream",
     category: "Main Course",
     description: "Delicious creamy paneer curry.",
