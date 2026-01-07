@@ -1,6 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-
-// Define TypeScript interface
 export interface IStaff extends Document {
   name: string;
   phone:string,
@@ -13,8 +11,6 @@ export interface IStaff extends Document {
   employeeId:string,
   dateJoined: Date;
 }
-
-// Create Mongoose schema
 const staffSchema: Schema = new Schema(
   {
     name: {
