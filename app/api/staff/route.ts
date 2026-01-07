@@ -88,7 +88,7 @@ export async function POST(req:Request){
 export async function DELETE(req: Request) {
   await dbConnect();
   try {
-    const { staffId } = await req.json(); // extract staffId from request body
+    const { staffId } = await req.json(); 
 
     if (!staffId) {
       return NextResponse.json({
@@ -120,9 +120,9 @@ export async function PUT(req:Request) {
         const formData = await req.formData();
         const userId =    formData.get('id') as string 
         // formData.get('id') as string 
-        console.log(`🟡 Received userId:`, userId, `| Type:`, typeof userId);
+        console.log(` Received userId:`, userId, `| Type:`, typeof userId);
         if (!userId || !mongoose.Types.ObjectId.isValid(userId)){
-            console.log(`🟡 Received userId:`, userId, `| Type:`, typeof userId,userId.length);
+            console.log(` Received userId:`, userId, `| Type:`, typeof userId,userId.length);
             return NextResponse.json({
                 success:false,
                 message:`Something went wrong`
