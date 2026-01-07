@@ -1,36 +1,193 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍽️ Dinengo – Full‑Stack Restaurant Management Website
 
-## Getting Started
+Dinengo is a **modern full‑stack restaurant website** built with **Next.js App Router**, **MongoDB**, and **Clerk authentication**. It supports **online food ordering, table reservations, payments, and complete admin/staff management** in a single platform.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Features
+
+### 👤 Customer Features
+
+* 🏠 **Home Page** – Hero section, featured dishes, testimonials
+* ℹ️ **About Page** – Restaurant story & values
+* 📞 **Contact Us Page** – Customer queries stored in database
+* 📋 **Menu Page** – Browse food items by category & diet
+* 🛒 **Order Page**
+
+  * Add items to cart
+  * Dropdown order flow
+  * View ordered items
+* 🍽️ **Table Reservation**
+
+  * Select date, time & number of guests
+  * Stripe payment integration
+  * Reservation confirmation & history
+* 🔐 **Authentication** using Clerk (Sign In / Sign Up)
+
+---
+
+### 🛠️ Admin Features
+
+* 📦 **Order Management**
+
+  * View incoming orders
+  * Accept / cancel orders
+* 👨‍🍳 **Staff Management**
+
+  * Add / update / delete staff
+  * Staff entry & role management
+* 🪑 **Table Management**
+
+  * Add tables
+  * Update seating capacity & status
+* 🍔 **Menu Management**
+
+  * Insert new items
+  * Update existing menu
+  * Delete items
+* 📅 **Reservation Management**
+
+  * Approve / reject reservations
+  * Assign tables
+
+---
+
+### 👷 Staff Features
+
+* 🔐 Staff entry page
+* 📋 View assigned orders & reservations
+
+---
+
+## 🧱 Tech Stack
+
+### Frontend
+
+* **Next.js 15 (App Router)**
+* **React 19**
+* **TypeScript**
+* **Tailwind CSS**
+* **Framer Motion** (animations)
+* **Zustand** (state management)
+
+### Backend
+
+* **MongoDB + Mongoose**
+* **Next.js API Routes**
+* **Stripe** (payments)
+* **Clerk** (authentication & user management)
+
+---
+
+## 📁 Project Structure
+
+```
+app/
+ ├─ (home)/
+ ├─ about/
+ ├─ contact/
+ ├─ menu/
+ ├─ order/
+ ├─ reservation/
+ ├─ admin/
+ │   ├─ add-item
+ │   ├─ add-table
+ │   ├─ staff-management
+ │   ├─ reservation-management
+ │   └─ order-approval
+ ├─ api/
+ ├─ sign-in/
+ ├─ sign-up/
+ └─ layout.tsx
+
+components/
+ ├─ Header.tsx
+ ├─ Footer.tsx
+ ├─ DishCard.tsx
+ ├─ Reservation.tsx
+ └─ UI Components
+
+models/
+ ├─ User.ts
+ ├─ Item.ts
+ ├─ Order.ts
+ ├─ Reservation.ts
+ ├─ Payment.ts
+ ├─ Table.ts
+ ├─ Staff.ts
+ └─ Contact.ts
+
+store/
+ ├─ cartStore.ts
+ ├─ reservationStore.ts
+ └─ itemStore.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🗄️ Database Models
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **User** – Clerk‑linked users (customer/admin/staff)
+* **Item** – Menu items
+* **Order** – Food orders
+* **Reservation** – Table bookings
+* **Payment** – Stripe payment records
+* **Table** – Restaurant tables
+* **Staff** – Employee records
+* **Contact** – Contact form messages
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 💳 Payments
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* Stripe Checkout
+* Reservation & order payments
+* Payment status tracking
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ⚙️ Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Create a `.env.local` file:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+MONGODB_URI=
+STRIPE_SECRET_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
+```
+
+---
+
+## 🧪 Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+---
+
+## 📌 Future Improvements
+
+* Role‑based dashboard UI
+* Real‑time order updates
+* Analytics dashboard
+* Email & SMS notifications
+
+---
+
+## 👨‍💻 Author
+
+**Dinengo Restaurant Website**
+Built with ❤️ using Next.js & MongoDB
+
+---
+
+## ⭐ Support
+
+If you like this project, don’t forget to ⭐ the repository!
