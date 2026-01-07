@@ -1,28 +1,10 @@
-// import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-// import "leaflet/dist/leaflet.css";
-
-// const Map = ({ lat, lng, address }) => {
-//   return (
-//     <MapContainer center={[lat, lng]} zoom={15} className="h-72 w-full rounded-lg border">
-//       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-//       <Marker position={[lat, lng]}>
-//         <Popup>{address}</Popup>
-//       </Marker>
-//     </MapContainer>
-//   );
-// };
-
-// export default Map;
 "use client";
-
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import L, { LatLngExpression, Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import markerShadowPng from "leaflet/dist/images/marker-shadow.png";
-
-// Lazy load React-Leaflet components to avoid SSR issues
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false }
