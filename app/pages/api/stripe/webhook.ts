@@ -1,14 +1,10 @@
-// /pages/api/stripe/webhook.ts
 import { buffer } from "micro";
 import Stripe from "stripe";
 import Payment from "@/database/models/payment.modal";
 import Reservation from "@/database/models/reservation.modal";
 import { dbConnect } from "@/database/dbConnect";
-
 export const config = { api: { bodyParser: false } };
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 export default async function handler(req: any, res: any) {
   const buf = await buffer(req);
   const sig = req.headers["stripe-signature"]!;
@@ -32,8 +28,6 @@ export default async function handler(req: any, res: any) {
     if (paymentDoc) {
       paymentDoc.paymentStatus = "succeeded";
       await paymentDoc.save();
-
-      // Confirm reservation
       const reservation = await Reservation.findById(paymentDoc.reservationId);
       if (reservation) {
         reservation.isConfirmed = true;
