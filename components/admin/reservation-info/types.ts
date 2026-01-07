@@ -1,4 +1,3 @@
-// types.ts
 export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled';
 
 export interface Reservation {
