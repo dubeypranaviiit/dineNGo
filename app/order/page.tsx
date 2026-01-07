@@ -1,16 +1,13 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
-
 interface OrderItem {
   itemId: string;
   name: string;
   quantity: number;
   price: number;
 }
-
 interface Order {
   _id: string;
   cartItems: OrderItem[];
@@ -19,12 +16,10 @@ interface Order {
   pickupTime?: string;
   createdAt: string;
 }
-
 const OrderPage: React.FC = () => {
   const { user } = useUser();
   const [orders, setOrders] = useState<Order[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("");
-
   const fetchOrders = async () => {
     if (!user) return;
     try {
@@ -34,18 +29,13 @@ const OrderPage: React.FC = () => {
       console.error("Error fetching orders:", err);
     }
   };
-
   useEffect(() => {
     fetchOrders();
   }, [user, statusFilter]);
-
   if (!user) return <div className="mt-20 text-center">Please sign in to view your orders.</div>;
-
   return (
     <div className="max-w-5xl mx-auto p-4 mt-20">
       <h1 className="text-3xl font-bold mb-6">My Orders</h1>
-
-      {/* Status Filter */}
       <div className="flex gap-4 mb-6">
         {["", "placed", "paid", "readyForPickup", "completed", "cancelled"].map((status) => (
           <button
@@ -59,8 +49,6 @@ const OrderPage: React.FC = () => {
           </button>
         ))}
       </div>
-
-      {/* Orders List */}
       {orders.length === 0 ? (
         <div className="text-gray-600">No orders found.</div>
       ) : (
