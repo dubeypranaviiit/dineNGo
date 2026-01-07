@@ -1,5 +1,5 @@
 export const getCachedItems = () => {
-  if (typeof window === "undefined") return null; // ✅ add this
+  if (typeof window === "undefined") return null; 
 
   const CACHE_KEY = "items_cache";
   try {
