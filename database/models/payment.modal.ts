@@ -16,7 +16,7 @@ const PaymentSchema = new Schema<IPayment>(
     reservationId: {
       type: Schema.Types.ObjectId,
       ref: "Reservation",
-      default: null, // ✅ allows creating payment before reservation
+      default: null, //  allows creating payment before reservation
       required: false,
     },
     amount: { type: Number, required: true },
