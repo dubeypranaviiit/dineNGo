@@ -90,7 +90,8 @@ export async function PUT(req: Request, context: any) {
 }
 export async function GET(
   req: Request,
-  context: { params: { id: string } }
+  context:any
+  // context: { params: { id: string } }
 ) {
   try {
 
