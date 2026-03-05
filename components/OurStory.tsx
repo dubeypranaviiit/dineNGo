@@ -14,7 +14,7 @@ const OurStory: React.FC = () => {
       <div className="max-w-5xl mx-auto text-center">
         <h2 className="text-5xl font-extrabold mb-6 text-gray-800">Our Story</h2>
         <p className="text-gray-600 text-lg max-w-3xl mx-auto mb-10 leading-relaxed">
-          Since 2010, we've been crafting unforgettable dining experiences with passion and dedication to culinary excellence.
+          Since 2025, we've been crafting unforgettable dining experiences with passion and dedication to culinary excellence.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
           {stats.map((stat, index) => (

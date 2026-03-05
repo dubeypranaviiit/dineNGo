@@ -1,9 +1,8 @@
-// types.ts
 export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled';
 
 export interface Reservation {
-  _id: string;  // original backend ID
-  id: string;   // normalized ID for frontend consistency
+  _id: string;  
+  id: string;  
   name: string;
   email?: string;
   phone?: string;

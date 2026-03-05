@@ -60,7 +60,6 @@ const OrderPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Orders List */}
       {orders.length === 0 ? (
         <div className="text-gray-600">No orders found.</div>
       ) : (

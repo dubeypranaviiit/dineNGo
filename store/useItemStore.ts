@@ -18,7 +18,7 @@ interface ItemState {
 }
 
 const CACHE_KEY = "items_cache";
-const CACHE_TIME = 15 * 60 * 1000; // 15 minutes
+const CACHE_TIME = 15 * 60 * 1000; 
 const isClient = typeof window !== "undefined";
 
 export const useItemStore = create<ItemState>((set, get) => ({
@@ -46,10 +46,11 @@ export const useItemStore = create<ItemState>((set, get) => ({
           return;
         }
       }
+      const res = await axios.get("/api/item");
 
-      const res = await axios.get<{ items: Item[] }>("/api/item");
-      set({ items: res.data.items });
+console.log("Items API response:", res.data);
 
+set({ items: res.data.items });
       if (isClient) {
         localStorage.setItem(
           CACHE_KEY,

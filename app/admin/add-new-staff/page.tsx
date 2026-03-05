@@ -28,7 +28,6 @@ const AddStaff = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      // @ts-expect-error
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,

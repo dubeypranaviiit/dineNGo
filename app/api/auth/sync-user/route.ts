@@ -21,13 +21,15 @@ export async function POST(req: Request) {
       const email = user.emailAddresses?.[0]?.emailAddress || "";
       const name = `${user.firstName || ""} ${user.lastName || ""}`.trim() || email.split("@")[0];
       const phone = user.phoneNumbers?.[0]?.phoneNumber || "";
-
+       const role =
+        (user.publicMetadata?.role as "customer" | "admin" | "staff") ||
+        "customer";
       dbUser = await User.create({
         clerkUserId: userId,
         name,
         email,
         phone,
-        role: "customer",
+        role,
       });
 
       console.log(" User created on first sign-in (local):", email);

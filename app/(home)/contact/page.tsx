@@ -50,7 +50,7 @@ import dynamic from 'next/dynamic';
 import HeroSection from '@/components/about/HeroSection';
 import ContactForm from '@/components/ContactForm';
 
-// Dynamically import Map component (client-only)
+
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
 export default function ContactPage() {

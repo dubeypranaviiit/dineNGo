@@ -1,8 +1,10 @@
 import Staff from "@/database/models/staff.modal";
+import User from "@/database/models/user.modal";
 import { dbConnect } from "@/database/dbConnect";
 import { NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 import mongoose from "mongoose";
+import { clerkClient } from "@clerk/nextjs/server";
 export async function GET(){
    await dbConnect();
     try{
@@ -24,12 +26,11 @@ export async function GET(){
 }
 export async function POST(req:Request){
     await dbConnect();
-   
     try{
        
         const formData = await req.formData();
         const timestamp = Date.now();
-        console.log(formData,":formData");
+       
         const image = formData.getAll('image').find(file => file instanceof File);
     
         if (!image) {
@@ -40,7 +41,6 @@ export async function POST(req:Request){
         const path =`./public/${timestamp}_${image.name}`;
         await writeFile(path,buffer);
         const imageUrl = `/${timestamp}_${image.name}`
-        console.log(`${imageUrl}`);
         const staffData = {
             name: formData.get('name') as string,
             email: formData.get('email') as string,
@@ -51,9 +51,48 @@ export async function POST(req:Request){
             status:formData.get('status') as string,
             image: imageUrl, 
         };
-        
+        const clerkUserId = staffData.employeeId;
+
+         if (!clerkUserId) {
+             return NextResponse.json({
+                   success: false,
+           message: "Employee ID (Clerk userId) is required",
+            }, { status: 400 });
+                }
+
+
+              // verify Clerk user exists
+              const clerk = await clerkClient();
+    try {
+      await clerk.users.getUser(clerkUserId);
+    } catch {
+      return NextResponse.json(
+        { success: false, message: "Invalid employeeId. Clerk user not found." },
+        { status: 400 }
+      );
+    }
+ const existingStaff = await Staff.findOne({ employeeId: clerkUserId });
+
+    if (existingStaff) {
+      return NextResponse.json({
+        success: false,
+        message: "Staff already exists",
+      });
+    }
          await Staff.create(staffData);
-        console.log(`staff Saved`);
+         //  update role in Clerk metadata
+    await clerk.users.updateUser(clerkUserId, {
+      publicMetadata: {
+        role: "staff",
+      },
+    });
+
+    //  update role in User collection
+    await User.findOneAndUpdate(
+      { clerkUserId: clerkUserId },
+      { role: "staff" },
+      { new: true }
+    );
     
          return NextResponse.json({
             success:true,
@@ -68,27 +107,11 @@ export async function POST(req:Request){
     }
 
 }
-// export async function DELETE(staffId:string) {
-//      await dbConnect();
-//      try{
-//         // const staffId = req.json();
-//         await Staff.findByIdAndDelete(staffId);
-//         return NextResponse.json({
-//             success:true,
-//             message:`Staff deleted successfully`
-//         })
-//      }catch(error){
-//         console.log(`Error while deleting data:${error}`);
-//         return NextResponse.json({
-//             success:false,
-//             message:`Something went wrong please try again later`
-//         })
-//      }
-// }
+
 export async function DELETE(req: Request) {
   await dbConnect();
   try {
-    const { staffId } = await req.json(); // extract staffId from request body
+    const { staffId } = await req.json(); 
 
     if (!staffId) {
       return NextResponse.json({
@@ -119,10 +142,10 @@ export async function PUT(req:Request) {
         console.log(`request came`);
         const formData = await req.formData();
         const userId =    formData.get('id') as string 
-        // formData.get('id') as string 
-        console.log(`🟡 Received userId:`, userId, `| Type:`, typeof userId);
+       
+        console.log(` Received userId:`, userId, `| Type:`, typeof userId);
         if (!userId || !mongoose.Types.ObjectId.isValid(userId)){
-            console.log(`🟡 Received userId:`, userId, `| Type:`, typeof userId,userId.length);
+            console.log(` Received userId:`, userId, `| Type:`, typeof userId,userId.length);
             return NextResponse.json({
                 success:false,
                 message:`Something went wrong`

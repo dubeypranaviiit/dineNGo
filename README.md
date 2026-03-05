@@ -1,36 +1,236 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍽️ Dinengo – Full-Stack Restaurant Management Platform
 
-## Getting Started
+Dinengo is a **modern full-stack restaurant management platform** built with **Next.js App Router**, **MongoDB**, **Clerk authentication**, and **Stripe payments**.
 
-First, run the development server:
+It provides **online food ordering, table reservations, and a secure role-based admin dashboard** for managing restaurant operations.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+# 🚀 Features
+
+## 👤 Customer Features
+
+Accessible to **all users** through the **public `(home)` route group**.
+
+* 🏠 **Home Page** – Hero section and featured dishes
+* 📋 **Menu Page** – Browse dishes by category
+* 🛒 **Cart & Ordering**
+
+  * Add items to cart
+  * Place food orders
+* 🍽️ **Table Reservation**
+
+  * Select date, time, and number of guests
+  * Reservation confirmation
+* 💳 **Stripe Payment Integration**
+* 📞 **Contact Page** – Customer queries stored in database
+* 🔐 **Authentication**
+
+  * Sign In / Sign Up using Clerk
+
+---
+
+# 🛠️ Admin & Staff Dashboard
+
+Accessible **only to `admin` and `staff` roles** using **Role-Based Access Control (RBAC)**.
+
+Protected through:
+
+* Server-side role verification
+* Next.js protected layouts
+* API route authorization
+
+### 🍔 Menu Management
+
+* Add new menu items
+* Update existing items
+* Delete items
+
+### 👨‍🍳 Staff Management
+
+* Add new staff members
+* Update staff details
+* View staff list
+
+### 🪑 Table Management
+
+* Add restaurant tables
+* Update seating capacity
+* Manage table availability
+
+### 📅 Reservation Management
+
+* View reservations
+* Approve or reject reservations
+* Assign tables
+
+### 📦 Order Management
+
+* View incoming orders
+* Accept or cancel orders
+
+---
+
+# 🔐 Role-Based Access Control (RBAC)
+
+The platform supports **three user roles**:
+
+| Role     | Access                 |
+| -------- | ---------------------- |
+| Customer | Public pages only      |
+| Staff    | Admin dashboard access |
+| Admin    | Full system access     |
+
+RBAC is implemented using:
+
+* **Clerk Authentication**
+* **MongoDB user roles**
+* **Next.js server components**
+* **Protected Admin Layout**
+
+Example protection logic:
+
+```ts
+const role = await getUserRole()
+
+if (role === "customer") {
+  redirect("/")
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# 🧱 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Frontend
 
-## Learn More
+* **Next.js 15 (App Router)**
+* **React 19**
+* **TypeScript**
+* **Tailwind CSS**
+* **Framer Motion**
+* **Zustand (State Management)**
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* **MongoDB + Mongoose**
+* **Next.js API Routes**
+* **Stripe Payments**
+* **Clerk Authentication**
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 📁 Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+app
+ ├─ (home)                # Public routes
+ │   ├─ about
+ │   ├─ cart
+ │   ├─ contact
+ │   ├─ menu
+ │   ├─ order
+ │   ├─ order-menu
+ │   ├─ order-success
+ │   ├─ reservation
+ │   ├─ reservation-cancel
+ │   ├─ reservation-success
+ │   ├─ sign-in
+ │   ├─ sign-up
+ │   ├─ success
+ │   ├─ layout.tsx
+ │   └─ page.tsx
+ │
+ ├─ admin                 # RBAC protected dashboard
+ │   ├─ add-item
+ │   ├─ add-new-staff
+ │   ├─ add-table
+ │   ├─ approved-bookings
+ │   ├─ booking-approval
+ │   ├─ pending-reservations
+ │   ├─ reservation-management
+ │   ├─ update-item
+ │   ├─ view-staff-list
+ │   ├─ layout.tsx
+ │   └─ page.tsx
+ │
+ ├─ api                   # Backend API routes
+ │
+ ├─ layout.tsx
+ └─ globals.css
+```
+
+---
+
+# 🗄️ Database Models
+
+* **User** – Clerk-linked users with roles
+* **Item** – Menu items
+* **Order** – Food orders
+* **Reservation** – Table bookings
+* **Payment** – Stripe payment records
+* **Table** – Restaurant tables
+* **Staff** – Employee records
+* **Contact** – Contact form messages
+
+---
+
+# 💳 Payments
+
+Stripe is used for:
+
+* Reservation payments
+* Order checkout
+* Payment status tracking
+
+---
+
+# ⚙️ Environment Variables
+
+Create a `.env.local` file:
+
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+
+MONGODB_URI=
+
+STRIPE_SECRET_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
+```
+
+---
+
+# 🧪 Scripts
+
+```
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+---
+
+# 📌 Future Improvements
+
+* Admin analytics dashboard
+* Real-time order tracking
+* Kitchen order display system
+* Email & SMS notifications
+* Multi-branch restaurant support
+
+---
+
+# 👨‍💻 Author
+
+**Dinengo – Restaurant Management Platform**
+
+Built with ❤️ using **Next.js, MongoDB, Clerk, and Stripe**
+
+---
+
+⭐ If you like this project, consider **starring the repository**!

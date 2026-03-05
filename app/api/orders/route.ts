@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { message: "✅ Order placed successfully!", order },
+      { message: " Order placed successfully!", order },
       { status: 201 }
     );
   } catch (error) {

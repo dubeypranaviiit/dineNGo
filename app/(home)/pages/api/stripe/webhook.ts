@@ -1,4 +1,3 @@
-// /pages/api/stripe/webhook.ts
 import { buffer } from "micro";
 import Stripe from "stripe";
 import Payment from "@/database/models/payment.modal";
@@ -33,7 +32,6 @@ export default async function handler(req: any, res: any) {
       paymentDoc.paymentStatus = "succeeded";
       await paymentDoc.save();
 
-      // Confirm reservation
       const reservation = await Reservation.findById(paymentDoc.reservationId);
       if (reservation) {
         reservation.isConfirmed = true;

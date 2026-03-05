@@ -1,6 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-
-// Define TypeScript interface
 export interface IStaff extends Document {
   name: string;
   phone:string,
@@ -50,7 +48,8 @@ const staffSchema: Schema = new Schema(
     },
     employeeId:{
         type:String,
-        required:true
+        required:true,
+         unique: true
     },
     dateJoined:{
         type:Date,

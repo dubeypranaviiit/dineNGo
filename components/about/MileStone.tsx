@@ -1,7 +1,6 @@
 "use client"
 import gallery from "@/public/assets/images/gallery/gallery";
 import { motion } from "framer-motion";
-// import { Milestone } from "lucide-react";
 import Image from "next/image";
 const milestones = [
   { year: "2010", title: "Grand Opening", description: "First opened our doors to the public" },

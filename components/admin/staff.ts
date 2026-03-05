@@ -1,4 +1,4 @@
-// types/staff.ts
+
 export interface Staff {
   _id: string;           // MongoDB ID
   name: string;

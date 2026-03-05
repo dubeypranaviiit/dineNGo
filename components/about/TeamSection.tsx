@@ -1,6 +1,5 @@
 "use client"
 import TeamMemberCard from "./TeamMemberCard";
-// import { chefs } from "@/public/data/data";
 const teamMembers = [
   { name: "Chef Michael Anderson", role: "Executive Chef", bio: "15 years of excellence", image: "/chefs-2.jpg" },
   { name: "Sarah Williams", role: "Sous Chef", bio: "Specializes in French cuisine", image: "/chefs-3.jpg"},

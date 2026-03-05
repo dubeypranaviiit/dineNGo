@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// ✅ Define all public (non-protected) routes here
+// Define all public (non-protected) routes here
 const isPublicRoute = createRouteMatcher([
   "/",              // Home
   "/about",         // About
@@ -27,6 +27,6 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 });
 
 export const config = {
-  // ✅ Match all routes except static assets and internal Next.js files
+  //  Match all routes except static assets and internal Next.js files
   matcher: ["/((?!_next|.*\\..*|favicon.ico).*)"],
 };
